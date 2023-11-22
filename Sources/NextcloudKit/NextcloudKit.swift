@@ -486,10 +486,13 @@ import SwiftyJSON
         } catch { }
         #endif
 
-        if freeDisk < fileNameLocalSize * 3 {
+        if let freeDiskUnwrapped = freeDisk {
+            if freeDiskUnwrapped < fileNameLocalSize * 3 {
+                return completion(account, nil, nil, nil, NKError(errorCode: NKError.chunkNoEnoughMemory))
+            }
+        } else {
             return completion(account, nil, nil, nil, NKError(errorCode: NKError.chunkNoEnoughMemory))
         }
-
         func createFolder(completion: @escaping (_ errorCode: NKError) -> Void) {
 
             readFileOrFolder(serverUrlFileName: serverUrlChunkFolder, depth: "0", options: NKRequestOptions(queue: self.nkCommonInstance.backgroundQueue)) { _, _, _, error in
